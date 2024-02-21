@@ -1,15 +1,17 @@
 package steps;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Assert;
-
+import java.io.File;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlaceOrderStepsDefinition {
 
@@ -17,7 +19,14 @@ public class PlaceOrderStepsDefinition {
 
     @Given("Launch browser")
     public void launch_browser() {
-        driver = new ChromeDriver();
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("profile.default_content_setting_values.notifications", 2);
+        prefs.put("autofill.profile_enabled", false);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+        options.setExperimentalOption("prefs", prefs);
+        options.addExtensions(new File("C:\\Users\\Asus\\IdeaProjects\\Cucumber\\src\\test\\resources\\5.18.0_0.crx"));
+        driver = new ChromeDriver(options);
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
     }
@@ -82,10 +91,7 @@ public class PlaceOrderStepsDefinition {
     }
 
     @Then("Verify ' Logged in as username' at top")
-    public void verify_at_top() throws InterruptedException {
-        driver.navigate().to("https://automationexercise.com/account_created");
-        driver.findElement(By.xpath("//a[contains(@data-qa,'continue-button')]")).click();
-        Thread.sleep(1000);
+    public void verify_at_top() {
         Assert.assertEquals(driver.findElement(By.xpath("//b[contains(text(),'RRR')]")).getText(), "RRR");
     }
 
